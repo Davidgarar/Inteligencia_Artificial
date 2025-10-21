@@ -123,10 +123,10 @@ class App:
             self.draw_grid()
 
             # ✅ Muestra la información del algoritmo y del costo
-            self.show_path_info(
-                path,
-                f"Beam Search (β={beta}) — {len(path)-1} pasos | Costo total: {total_cost}"
-            )
+            total_cost = path_cost(path, self.env)
+            self.show_path_info(path, f"Beam Search (β={beta})", total_cost)
+
+            
         else:
             print("No se encontró camino")
             self.current_path = []
@@ -142,27 +142,33 @@ class App:
         if path:
             self.current_path = path
             self.current_step = 0
-            print(f"✅ Camino encontrado: {len(path)} pasos")
+            total_cost = path_cost(path, self.env)   # 🔹 calcula costo total
+            print(f"✅ Camino encontrado: {len(path)} pasos | Costo total: {total_cost}")
             self.draw_grid()
-            self.show_path_info(path, f"Dynamic A* (ε={epsilon})")
+            self.show_path_info(path, f"Dynamic A* (ε={epsilon})", total_cost)  # 🔹 pasa el costo al label
         else:
             print("No se encontró camino")
             self.current_path = []
             self.current_step = 0
             self.path_info_label.config(text=f"Dynamic A* (ε={epsilon}): Sin camino")
 
-    def show_path_info(self, path, algorithm_name="Algoritmo"):
+    def show_path_info(self, path, algorithm_name="Algoritmo", total_cost=None):
         """Muestra información sobre el camino encontrado"""
         print("\nINFORMACIÓN DEL CAMINO:")
         print(f"Algoritmo: {algorithm_name}")
-        print(f" Inicio: {path[0]}")
+        print(f"Inicio: {path[0]}")
         print(f"Meta: {path[-1]}")
-        print(f" Longitud del camino: {len(path)} pasos")
+        print(f"Longitud del camino: {len(path)} pasos")
+        if total_cost is not None:
+            print(f"Costo total: {total_cost}")
         print(f"Camino completo: {path}")
         
-        # Actualizar label en la interfaz
-        info_text = f"{algorithm_name}: {len(path)} pasos | Inicio: {path[0]} → Meta: {path[-1]}"
+        info_text = f"{algorithm_name}: {len(path)} pasos"
+        if total_cost is not None:
+            info_text += f" | Costo total: {total_cost}"
+        info_text += f" | Inicio: {path[0]} → Meta: {path[-1]}"
         self.path_info_label.config(text=info_text)
+
 
     def start_animation(self):
         """Inicia la animación automática del camino"""
