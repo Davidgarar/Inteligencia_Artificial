@@ -29,8 +29,10 @@ class Environment:
         moves = [(1,0), (-1,0), (0,1), (0,-1)]
         neighbors = []
         for dx, dy in moves:
-            nx, ny = x+dx, y+dy
+            nx, ny = x + dx, y + dy
             if 0 <= nx < self.size and 0 <= ny < self.size:
-                if self.grid[nx][ny] != 'X':
-                    neighbors.append((nx, ny))
+                cell = self.grid[nx][ny]
+                cost = 5 if cell == 'X' else 1
+                neighbors.append(((nx, ny), cost))
         return neighbors
+
