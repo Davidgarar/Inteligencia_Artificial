@@ -1,6 +1,6 @@
 import tkinter as tk
 from environment import Environment
-from algorithms import beam_search, dynamic_weighted_a_star
+from algorithms import beam_search, dynamic_weighted_a_star,path_cost
 
 class App:
     def __init__(self, root):
@@ -106,18 +106,33 @@ class App:
         """Ejecuta Beam Search y prepara la animación"""
         beta = self.beta_var.get()
         print(f"Ejecutando Beam Search (β={beta})...")
+
         path = beam_search(self.env, beta=beta)
+
         if path:
+            # ✅ Calculamos el costo total del camino
+            total_cost = path_cost(path, self.env)
+
+            # Guardamos la ruta y reiniciamos pasos
             self.current_path = path
             self.current_step = 0
-            print(f" Camino encontrado: {len(path)} pasos")
+
+            print(f"Camino encontrado: {len(path)} pasos | Costo total: {total_cost}")
+
+            # Redibuja el tablero
             self.draw_grid()
-            self.show_path_info(path, f"Beam Search (β={beta})")
+
+            # ✅ Muestra la información del algoritmo y del costo
+            self.show_path_info(
+                path,
+                f"Beam Search (β={beta}) — {len(path)-1} pasos | Costo total: {total_cost}"
+            )
         else:
             print("No se encontró camino")
             self.current_path = []
             self.current_step = 0
             self.path_info_label.config(text=f"Beam Search (β={beta}): Sin camino")
+
 
     def run_dynamic(self):
         """Ejecuta Dynamic A* y prepara la animación"""
